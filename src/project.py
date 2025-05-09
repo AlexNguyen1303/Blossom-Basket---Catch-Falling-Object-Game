@@ -33,6 +33,51 @@ def main():
         y = -30
         items.append(pygame.Rect(x,y,30, 30))
 
-   
+    #Game loop 
+    running = True
+    spawn_timer = 0 
+
+    while running:
+        clock.tick(FPS)
+        screen.fill(WHITE)
+
+        #Quit
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        # Move Basket 
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and basket_rect.left > 0:
+            basket_rect.x -= basket_speed
+        if keys[pygame.K_RIGHT] and basket_rect.right < WIDTH:
+            basket_rect.x += basket_speed 
+
+        #Spawn items 
+        spawn_timer += 1
+        if spawn_timer >=30:
+            spawn_item()
+            spawn_timer = 0
+
+        #Move items / collision
+        for item in items[:]:
+            item.y += 5
+            if item.colliderect(basket_rect):
+                items.remove(item)
+                score += 1
+            elif item.y > HEIGHT:
+                items.remove(item)
+                
+        screen.blit(basket_img,basket_rect)
+        for item in items:
+            screen.blit(item_img, item)
+        score_text = font.render(f"Score: {score}", True, (0,0,0))
+        screen.blit(score_text, (10,10))
+
+        pygame.display.flip()
+
+    pygame.quit()
+
+    
 if __name__ == "__main__":
     main()
