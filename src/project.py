@@ -60,7 +60,7 @@ def show_win_screen(screen, WIDTH, HEIGHT, font):
         pygame.draw.rect(screen, (255,200,200), quit_rect.inflate(40,20))
         screen.blit(quit_text, quit_rect)
 
-        pygame. display.flip 
+        pygame. display.flip()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -138,7 +138,7 @@ def main():
                 items.remove(item)
                 score += 1
                 if score >= 50:
-                    return
+                    return True
             elif item.y > HEIGHT:
                 items.remove(item)
                 
@@ -151,8 +151,25 @@ def main():
         pygame.display.flip()
 
     pygame.quit()
+    return False
+ 
 
 pygame.init()
    
 if __name__ == "__main__":
-    main()
+    pygame.init()
+    WIDTH, HEIGHT = 800, 1000
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Blossom Basket")
+    font = pygame.font.SysFont(None, 36)
+
+    while True:
+        if not show_menu(screen, WIDTH, HEIGHT, font):
+            break
+        if main():
+            if not show_win_screen(screen, WIDTH, HEIGHT, font):
+                break
+        else:
+            break
+
+    pygame.quit()
