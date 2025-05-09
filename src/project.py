@@ -105,6 +105,7 @@ def main():
     combo_active = False
     combo_start_time = 0
     combo_score = 0
+    combo_streak = 0
     combo_thresholds = [20,40,60,80,100]
     next_combo_index = 0
 
@@ -147,20 +148,26 @@ def main():
             if item.colliderect(basket_rect):
                 items.remove(item)
                 score += 1
+                combo_streak += 1
+
                 if combo_active:
                     combo_score += 1
 
-                if next_combo_index < len(combo_thresholds) and score >= combo_thresholds[next_combo_index]:
+                if (next_combo_index < len(combo_thresholds) and
+                    combo_streak == combo_thresholds[next_combo_index]):
                     combo_active = True
                     combo_start_time = pygame.time.get_ticks()
                     combo_score = 0
                     next_combo_index += 1
-
+                   
                 if score >= goal:
                     pygame.quit()
                     return True
+                
             elif item.y > HEIGHT:
                 items.remove(item)
+                combo_streak = 0
+                next_combo_index = 0
 
         #Draw everything 
         screen.blit(basket_img, basket_rect)
