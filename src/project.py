@@ -86,76 +86,97 @@ def main():
     #Colors
     WHITE = (255,255,255)
     PINK = (255,182,193)
+    font = pygame.font.SysFont(None, 36)
     #Basket
     basket_img = pygame.Surface((100,50))
     basket_img.fill(PINK)
     basket_rect = basket_img.get_rect(center=(WIDTH//2, HEIGHT - 50))
-    basket_speed = 7
+    base_basket_speed = 7
     # Falling items 
     item_img = pygame.Surface((30,30))
     item_img.fill((200,100,150))
     items = []
+    spawn_timer = 0
     #Score 
     score = 0 
-    font = pygame.font.SysFont(None,36)
+    goal = 100
 
-    #Function to spawn items
-    def spawn_item():
-        x = random.randint(0,WIDTH - 30)
-        y = -30
-        items.append(pygame.Rect(x,y,30, 30))
+    #Combo System
+    combo_active = False
+    combo_start_time = 0
+    combo_score = 0
+    combo_thresholds = [20,40,60,80,100]
+    next_combo_index = 0
 
-    #Game loop 
     running = True
-    spawn_timer = 0 
 
     while running:
-        clock.tick(FPS)
+        dt = clock.tick(FPS)
         screen.fill(WHITE)
 
-        #Quit
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pygame.quit()
+                return False
+            
+        #Combo Timer 
+        if combo_active and pygame.time.get_ticks() - combo_start_time >= 10000:
+            combo_active = False
 
-        # Move Basket 
+        #Adjust speeds
+        current_basket_speed = base_basket_speed + 3 if combo_active else base_basket_speed
+        current_fall_speed = 4 + 3 if combo_active else 4
+
+        #Move Basket 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and basket_rect.left > 0:
-            basket_rect.x -= basket_speed
+            basket_rect.x -= current_basket_speed
         if keys[pygame.K_RIGHT] and basket_rect.right < WIDTH:
-            basket_rect.x += basket_speed 
+            basket_rect.x += current_basket_speed
 
         #Spawn items 
-        spawn_timer += 1
-        if spawn_timer >=60:
-            spawn_item()
+        spawn_timer += dt
+        if spawn_timer >= 1000:
+            x = random.randint(0, WIDTH - 30)
+            items.append(pygame.Rect(x, -30, 30, 30))
             spawn_timer = 0
 
         #Move items / collision
         for item in items[:]:
-            item.y += 4
+            item.y += current_fall_speed
             if item.colliderect(basket_rect):
                 items.remove(item)
                 score += 1
-                if score >= 50:
+                if combo_active:
+                    combo_score += 1
+
+                if next_combo_index < len(combo_thresholds) and score >= combo_thresholds[next_combo_index]:
+                    combo_active = True
+                    combo_start_time = pygame.time.get_ticks()
+                    combo_score = 0
+                    next_combo_index += 1
+
+                if score >= goal:
+                    pygame.quit()
                     return True
             elif item.y > HEIGHT:
                 items.remove(item)
-                
-        screen.blit(basket_img,basket_rect)
+
+        #Draw everything 
+        screen.blit(basket_img, basket_rect)
         for item in items:
             screen.blit(item_img, item)
         score_text = font.render(f"Score: {score}", True, (0,0,0))
         screen.blit(score_text, (10,10))
+        if combo_active:
+            combo_text = font.render(f"Amazing Combo x {combo_score}!", True, (255,100,100))
+            screen.blit(combo_text, (WIDTH // 2 - combo_text.get_width() // 2, 50))
 
         pygame.display.flip()
 
     pygame.quit()
     return False
- 
-
-pygame.init()
-   
+  
 if __name__ == "__main__":
     pygame.init()
     WIDTH, HEIGHT = 800, 1000
