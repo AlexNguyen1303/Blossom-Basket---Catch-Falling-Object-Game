@@ -1,6 +1,41 @@
 import pygame
 import random 
 
+def show_menu(screen, WIDTH,HEIGHT, font):
+    title_font = pygame.font.SysFont(None,72)
+    button_font = pygame.font.SysFont(None,48)
+
+    while True:
+        screen.fill((255,255,255))
+
+        #Title
+        title_text = title_font.render("Blossom Basket", True, (255,105,180))
+        screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 200))
+
+        #Play button 
+        play_text = button_font.render("Play", True, (0,0,0))
+        play_rect = play_text.get_rect(center=(WIDTH // 2, 400))
+        pygame.draw.rect(screen, (255,182,193), play_rect.inflate(40,20))
+        screen.blit(play_text, play_rect)
+
+        #Quit button 
+        quit_text = button_font.render("Quit", True, (0,0,0))
+        quit_rect = quit_text.get_rect(center = (WIDTH // 2, 500))
+        pygame. draw.rect(screen, (255,182,193), quit_rect.inflate(40,20))
+        screen.blit(quit_text, quit_rect)
+
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if play_rect.collidepoint(event.pos):
+                    return True
+                elif quit_rect.collidepoint(event.pos):
+                    pygame.quit()
+                    return False
 def main():
 
     pygame.init()
@@ -66,7 +101,7 @@ def main():
                 items.remove(item)
                 score += 1
                 if score >= 50:
-                    running = False
+                    return
             elif item.y > HEIGHT:
                 items.remove(item)
                 
