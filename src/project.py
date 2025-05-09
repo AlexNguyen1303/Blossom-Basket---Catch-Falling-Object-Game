@@ -123,6 +123,7 @@ def main():
         #Combo Timer 
         if combo_active and pygame.time.get_ticks() - combo_start_time >= 10000:
             combo_active = False
+            combo_score = 0
 
         #Adjust speeds
         current_basket_speed = base_basket_speed + 3 if combo_active else base_basket_speed
@@ -161,19 +162,29 @@ def main():
                     next_combo_index += 1
                    
                 if score >= goal:
-                    pygame.quit()
                     return True
                 
             elif item.y > HEIGHT:
                 items.remove(item)
                 combo_streak = 0
-                next_combo_index = 0
+                next_combo_index = 0 
+                combo_active = False
+                combo_score = 0
+
+        # Glow basket during combo
+        if combo_active:
+            basket_img.fill((255, 105, 180))  
+        else:
+            basket_img.fill(PINK)
+
 
         #Draw everything 
         screen.blit(basket_img, basket_rect)
         for item in items:
             screen.blit(item_img, item)
         score_text = font.render(f"Score: {score}", True, (0,0,0))
+        streak_text = font.render(f"Streak: {combo_streak}", True, (100,100,100))
+        screen.blit(streak_text, (10, 50))
         screen.blit(score_text, (10,10))
         if combo_active:
             combo_text = font.render(f"Amazing Combo x {combo_score}!", True, (255,100,100))
