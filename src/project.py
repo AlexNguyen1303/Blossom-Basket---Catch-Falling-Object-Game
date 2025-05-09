@@ -181,14 +181,23 @@ def main():
         #Draw everything 
         screen.blit(basket_img, basket_rect)
         for item in items:
-            screen.blit(item_img, item)
+            if combo_active:
+                glowing_item = pygame.Surface((30, 30))
+                glowing_item.fill((255, 200, 220))  # light pink glow
+                glowing_item.set_alpha(200)
+                screen.blit(glowing_item, item)
+            else:
+                screen.blit(item_img, item)
+
         score_text = font.render(f"Score: {score}", True, (0,0,0))
         streak_text = font.render(f"Streak: {combo_streak}", True, (100,100,100))
+        screen.blit(score_text, (10, 10))
         screen.blit(streak_text, (10, 50))
-        screen.blit(score_text, (10,10))
+
         if combo_active:
             combo_text = font.render(f"Amazing Combo x {combo_score}!", True, (255,100,100))
             screen.blit(combo_text, (WIDTH // 2 - combo_text.get_width() // 2, 50))
+
 
         pygame.display.flip()
 
