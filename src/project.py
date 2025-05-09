@@ -55,16 +55,18 @@ def main():
 
         #Spawn items 
         spawn_timer += 1
-        if spawn_timer >=30:
+        if spawn_timer >=60:
             spawn_item()
             spawn_timer = 0
 
         #Move items / collision
         for item in items[:]:
-            item.y += 5
+            item.y += 4
             if item.colliderect(basket_rect):
                 items.remove(item)
                 score += 1
+                if score >= 50:
+                    running = False
             elif item.y > HEIGHT:
                 items.remove(item)
                 
@@ -75,6 +77,16 @@ def main():
         screen.blit(score_text, (10,10))
 
         pygame.display.flip()
+
+    #Win 
+    win_font = pygame.font.SysFont(None, 64)
+    win_text = win_font.render("Amazing Picnic!", True, (0,150,0))
+    screen.fill(WHITE)
+    screen.blit(win_text,(WIDTH // 2 - 150, HEIGHT // 2 - 30))
+    pygame.display.flip()
+    pygame.time.wait(3000)
+
+
 
     pygame.quit()
 
