@@ -198,6 +198,22 @@ def main():
             combo_text = font.render(f"Amazing Combo x {combo_score}!", True, (255,100,100))
             screen.blit(combo_text, (WIDTH // 2 - combo_text.get_width() // 2, 50))
 
+            #Combo countdown bar 
+            remaining_time = 10000 - (pygame.time.get_ticks() - combo_start_time)
+            bar_width = int((remaining_time / 10000) * 300)
+            bar_height = 15
+            bar_x = WIDTH // 2 - 150
+            bar_y = 80
+            remaining_seconds = remaining_time // 1000
+            countdown_text = font.render(f"{remaining_seconds + 1}s", True, (120, 120, 120))
+            screen.blit(countdown_text, (WIDTH // 2 - countdown_text.get_width() // 2, bar_y - 25))
+
+            # Draw the bar 
+            pygame.draw.rect(screen, (200, 200, 200), (bar_x, bar_y, 300, bar_height))
+            # Draw remaining time on a bar 
+            glow_color = (255, 105 + (pygame.time.get_ticks() // 30) % 50, 180)
+            pygame.draw.rect(screen, glow_color, (bar_x, bar_y, bar_width, bar_height))
+
 
         pygame.display.flip()
 
