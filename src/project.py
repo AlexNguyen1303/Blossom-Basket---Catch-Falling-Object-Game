@@ -104,12 +104,11 @@ def main():
     #Combo System
     combo_active = False
     combo_start_time = 0
-    combo_score = 0
     combo_streak = 0
-    combo_thresholds = [20,40,60,80,100]
-    next_combo_index = 0
+    pop_start_time = 0
+    pop_duration = 300
 
-    running = True
+    running = True 
 
     while running:
         dt = clock.tick(FPS)
@@ -123,7 +122,6 @@ def main():
         #Combo Timer 
         if combo_active and pygame.time.get_ticks() - combo_start_time >= 10000:
             combo_active = False
-            combo_score = 0
 
         #Adjust speeds
         current_basket_speed = base_basket_speed + 3 if combo_active else base_basket_speed
@@ -148,26 +146,18 @@ def main():
             item.y += current_fall_speed
             if item.colliderect(basket_rect):
                 items.remove(item)
-                score += 1
                 combo_streak += 1
 
                 if combo_active:
-                    if combo_score >= 15:
-                        score += 4
-                    elif combo_score >= 10:
-                        score += 3
-                    elif combo_score >= 5:
-                        score += 2
-                    else:
-                        score += 1
+                     score += 2
                 else:
                     score += 1
-                if (next_combo_index < len(combo_thresholds) and
-                    combo_streak == combo_thresholds[next_combo_index]):
-                    combo_active = True
-                    combo_start_time = pygame.time.get_ticks()
-                    combo_score = 0
-                    next_combo_index += 1
+
+                if combo_streak > 0 and combo_streak % 20 == 0:
+                    if not combo_active:
+                        combo_active = True
+                        combo_start_time = pygame.time.get_ticks()
+                        pop_start_time = pygame.time.get_ticks()
                    
                 if score >= goal:
                     return True
@@ -175,9 +165,7 @@ def main():
             elif item.y > HEIGHT:
                 items.remove(item)
                 combo_streak = 0
-                next_combo_index = 0 
                 combo_active = False
-                combo_score = 0
 
         # Glow basket during combo
         if combo_active:
@@ -203,22 +191,20 @@ def main():
         screen.blit(streak_text, (10, 50))
 
         if combo_active:
-            combo_text = font.render(f"AMAZING COMBO !! x {combo_score}!", True, (255,100,100))
+            combo_text = font.render(f"AMAZING COMBO !! x {combo_streak}!", True, (255,100,100))
             screen.blit(combo_text, (WIDTH // 2 - combo_text.get_width() // 2, 20))
 
-            #Combo Multiplier 
-            if combo_score >=15:
-                multiplier = "x4"
-            elif combo_score >= 10:
-                multiplier = "x3"
-            elif combo_score >= 5:
-                multiplier = "x2"
-            else:
-                multiplier = "x1" 
+            # Show popped effect : 
+            elapsed = pygame.time.get_ticks() - pop_start_time
+            scale = 1.0
+            if elapsed < pop_duration:
+                scale = 1.2 - 0.2 * (elapsed / pop_duration)  # Shrinks back to normal
 
-            # Show multiplier text : 
-            multiplier_text = font.render(f"COMBO! {multiplier}", True,(255,50,150))
-            screen.blit(multiplier_text,(WIDTH // 2 - multiplier_text.get_width() // 2,50))
+            # Show popped text :
+            pop_font = pygame.font.SysFont(None, int(36 * scale))
+            pop_text = pop_font.render(f"DOUBLE POINT!x2", True, (255, 50, 150))
+            screen.blit(pop_text, (WIDTH // 2 - pop_text.get_width() // 2, 50))
+
 
             #Combo countdown bar 
             remaining_time = 10000 - (pygame.time.get_ticks() - combo_start_time)
