@@ -85,7 +85,6 @@ def main():
     FPS = 60 
     #Colors
     WHITE = (255,255,255)
-    PINK = (255,182,193)
     font = pygame.font.SysFont(None, 36)
     #Basket
     original_img = pygame.image.load("Empty_Basket.png").convert_alpha()
@@ -97,9 +96,12 @@ def main():
     base_basket_speed = 7
     # Falling items 
     emoji_items = [
-    {"emoji": "🍓", "points": 3},
-    {"emoji": "🥪", "points": 2},
-    {"emoji": "🧃", "points": 1}
+    {"emoji": "🍓", "points": 3, "type": "good"},
+    {"emoji": "🥪", "points": 2, "type": "good"},
+    {"emoji": "🧃", "points": 1, "type": "good"},
+    {"emoji": "🪳", "type": "bug"},     
+    {"emoji": "👢", "type": "boot"},    
+    {"emoji": "🗑️", "type": "moldy"}
     ]
     items = []
     spawn_timer = 0
@@ -154,26 +156,34 @@ def main():
             item["rect"].y += current_fall_speed
             if item["rect"].colliderect(basket_rect):
                 items.remove(item)
-                combo_streak += 1
-                points = item["points"]
-                if combo_active:
-                    score += points * 2
-                else:
-                    score += points
+                #good items
+                if item.get("type") == "good":
+                    combo_streak += 1
+                    points = item["points"]
+                    score += points * 2 if combo_active else points
 
-            if combo_streak > 0 and combo_streak % 20 == 0:
-                if not combo_active:
-                    combo_active = True
-                    combo_start_time = pygame.time.get_ticks()
-                    pop_start_time = pygame.time.get_ticks()
-                   
-                if score >= goal:
-                    return True
+                    if score >= goal:
+                        return True
+
+                    if combo_streak % 20 == 0:
+                        if not combo_active:
+                            combo_active = True
+                            combo_start_time = pygame.time.get_ticks()
+                            pop_start_time = pygame.time.get_ticks()
+
+                #bad items
+                elif item["type"] == "bug":
+                    return False  # Game over
+                elif item["type"] == "boot":
+                    score = max(0, score - 2)
+                elif item["type"] == "moldy":
+                    combo_streak = 0
                 
             elif item["rect"].y > HEIGHT:
                 items.remove(item)
-                combo_streak = 0
-                combo_active = False
+                if item.get("type") == "good":
+                    combo_streak = 0
+                    combo_active = False
 
         #Draw everything 
         screen.blit(basket_img, basket_rect)
