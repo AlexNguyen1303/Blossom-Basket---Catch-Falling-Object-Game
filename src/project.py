@@ -1,5 +1,6 @@
 import pygame
 import random 
+import math
 
 def show_menu(screen, WIDTH,HEIGHT, font):
     title_font = pygame.font.SysFont(None,72)
@@ -41,22 +42,34 @@ def show_win_screen(screen, WIDTH, HEIGHT, font):
     win_font = pygame.font.SysFont(None, 64)
     button_font = pygame.font.SysFont(None, 48)
 
+    #basket image
+    basket_image = pygame.image.load("FullBasket.png").convert_alpha()
+    basket_scaled = pygame.transform.scale(basket_image, (250, 250))  
+    basket_rect = basket_scaled.get_rect(center=(WIDTH // 2, 330)) 
+
     while True: 
         screen.fill((255,255,255))
 
         #Win Text
         win_text = win_font.render("Amazing Picnic!", True, (0,150,0))
-        screen.blit(win_text, (WIDTH // 2 - win_text.get_width() // 2, 200))
+        screen.blit(win_text, (WIDTH // 2 - win_text.get_width() // 2, 150))
+
+        #basket image
+        # Floating effect
+        offset = int(5 * math.sin(pygame.time.get_ticks() / 300))  # Sine wave motion
+        floaty_rect = basket_rect.copy()
+        floaty_rect.centery += offset
+        screen.blit(basket_scaled, floaty_rect)
 
         #Play Again 
         play_text = button_font.render("Play Again", True, (0,0,0))
-        play_rect = play_text.get_rect(center=(WIDTH // 2, 400))
+        play_rect = play_text.get_rect(center=(WIDTH // 2, 580))
         pygame.draw.rect(screen, (200,255,200), play_rect.inflate(40, 20))
         screen.blit(play_text, play_rect)
 
         #Quit button
         quit_text = button_font.render("Quit", True,(0,0,0))
-        quit_rect = quit_text.get_rect(center=(WIDTH // 2,500))
+        quit_rect = quit_text.get_rect(center=(WIDTH // 2,670))
         pygame.draw.rect(screen, (255,200,200), quit_rect.inflate(40,20))
         screen.blit(quit_text, quit_rect)
 
