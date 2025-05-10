@@ -152,8 +152,16 @@ def main():
                 combo_streak += 1
 
                 if combo_active:
-                    combo_score += 1
-
+                    if combo_score >= 15:
+                        score += 4
+                    elif combo_score >= 10:
+                        score += 3
+                    elif combo_score >= 5:
+                        score += 2
+                    else:
+                        score += 1
+                else:
+                    score += 1
                 if (next_combo_index < len(combo_thresholds) and
                     combo_streak == combo_thresholds[next_combo_index]):
                     combo_active = True
@@ -195,8 +203,22 @@ def main():
         screen.blit(streak_text, (10, 50))
 
         if combo_active:
-            combo_text = font.render(f"Amazing Combo x {combo_score}!", True, (255,100,100))
-            screen.blit(combo_text, (WIDTH // 2 - combo_text.get_width() // 2, 50))
+            combo_text = font.render(f"AMAZING COMBO !! x {combo_score}!", True, (255,100,100))
+            screen.blit(combo_text, (WIDTH // 2 - combo_text.get_width() // 2, 20))
+
+            #Combo Multiplier 
+            if combo_score >=15:
+                multiplier = "x4"
+            elif combo_score >= 10:
+                multiplier = "x3"
+            elif combo_score >= 5:
+                multiplier = "x2"
+            else:
+                multiplier = "x1" 
+
+            # Show multiplier text : 
+            multiplier_text = font.render(f"COMBO! {multiplier}", True,(255,50,150))
+            screen.blit(multiplier_text,(WIDTH // 2 - multiplier_text.get_width() // 2,50))
 
             #Combo countdown bar 
             remaining_time = 10000 - (pygame.time.get_ticks() - combo_start_time)
