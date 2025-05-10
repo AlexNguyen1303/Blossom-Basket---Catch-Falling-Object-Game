@@ -170,7 +170,7 @@ def main():
                 if score >= goal:
                     return True
                 
-            elif item.y > HEIGHT:
+            elif item["rect"].y > HEIGHT:
                 items.remove(item)
                 combo_streak = 0
                 combo_active = False
