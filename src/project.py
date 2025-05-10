@@ -96,8 +96,11 @@ def main():
     basket_rect = basket_img.get_rect(center=(WIDTH // 2, HEIGHT - target_height // 2))
     base_basket_speed = 7
     # Falling items 
-    item_img = pygame.Surface((30,30))
-    item_img.fill((200,100,150))
+    emoji_items = [
+    {"emoji": "🍓", "points": 3},
+    {"emoji": "🥪", "points": 2},
+    {"emoji": "🧃", "points": 1}
+    ]
     items = []
     spawn_timer = 0
     #Score 
@@ -140,27 +143,29 @@ def main():
         #Spawn items 
         spawn_timer += dt
         if spawn_timer >= 1000:
+            item = random.choice(emoji_items).copy()
             x = random.randint(0, WIDTH - 30)
-            items.append(pygame.Rect(x, -30, 30, 30))
+            item["rect"] = pygame.Rect(x, -30, 30, 30)
+            items.append(item)
             spawn_timer = 0
 
         #Move items / collision
         for item in items[:]:
-            item.y += current_fall_speed
-            if item.colliderect(basket_rect):
+            item["rect"].y += current_fall_speed
+            if item["rect"].colliderect(basket_rect):
                 items.remove(item)
                 combo_streak += 1
-
+                points = item["points"]
                 if combo_active:
-                     score += 2
+                    score += points * 2
                 else:
-                    score += 1
+                    score += points
 
-                if combo_streak > 0 and combo_streak % 20 == 0:
-                    if not combo_active:
-                        combo_active = True
-                        combo_start_time = pygame.time.get_ticks()
-                        pop_start_time = pygame.time.get_ticks()
+            if combo_streak > 0 and combo_streak % 20 == 0:
+                if not combo_active:
+                    combo_active = True
+                    combo_start_time = pygame.time.get_ticks()
+                    pop_start_time = pygame.time.get_ticks()
                    
                 if score >= goal:
                     return True
@@ -174,12 +179,14 @@ def main():
         screen.blit(basket_img, basket_rect)
         for item in items:
             if combo_active:
-                glowing_item = pygame.Surface((30, 30))
-                glowing_item.fill((255, 200, 220))  # light pink glow
-                glowing_item.set_alpha(200)
-                screen.blit(glowing_item, item)
-            else:
-                screen.blit(item_img, item)
+                # glowing behind emoji
+                glow = pygame.Surface((30, 30), pygame.SRCALPHA)
+                glow.fill((255, 200, 220, 180))
+                screen.blit(glow, item["rect"])
+            emoji_font = pygame.font.SysFont(None, 40)
+            emoji_text = emoji_font.render(item["emoji"], True, (0, 0, 0))
+            text_rect = emoji_text.get_rect(center=item["rect"].center)
+            screen.blit(emoji_text, text_rect)
 
         score_text = font.render(f"Score: {score}", True, (0,0,0))
         streak_text = font.render(f"Streak: {combo_streak}", True, (100,100,100))
