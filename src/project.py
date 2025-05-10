@@ -183,7 +183,7 @@ def main():
                 glow = pygame.Surface((30, 30), pygame.SRCALPHA)
                 glow.fill((255, 200, 220, 180))
                 screen.blit(glow, item["rect"])
-            emoji_font = pygame.font.SysFont(None, 40)
+            emoji_font = pygame.font.SysFont("Segoe UI Emoji", 40)
             emoji_text = emoji_font.render(item["emoji"], True, (0, 0, 0))
             text_rect = emoji_text.get_rect(center=item["rect"].center)
             screen.blit(emoji_text, text_rect)
