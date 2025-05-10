@@ -40,16 +40,15 @@ def show_menu(screen, WIDTH,HEIGHT, font):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
                 return False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if play_rect.collidepoint(event.pos):
                     return True
                 elif quit_rect.collidepoint(event.pos):
-                    pygame.quit()
                     return False
                 
 def show_win_screen(screen, WIDTH, HEIGHT, font):
+    pygame.font.init()
     win_font = pygame.font.SysFont(None, 64)
     button_font = pygame.font.SysFont(None, 48)
 
@@ -88,15 +87,14 @@ def show_win_screen(screen, WIDTH, HEIGHT, font):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
                 return False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if play_rect.collidepoint(event.pos):
                     return True
                 elif quit_rect.collidepoint(event.pos):
-                    pygame.quit()
                     return False
 def show_game_over_screen(screen, WIDTH, HEIGHT, font):
+    pygame.font.init()
     over_font = pygame.font.SysFont(None, 64)
     button_font = pygame.font.SysFont(None, 48)
 
@@ -134,13 +132,11 @@ def show_game_over_screen(screen, WIDTH, HEIGHT, font):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
                 return False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if play_rect.collidepoint(event.pos):
                     return True
                 elif quit_rect.collidepoint(event.pos):
-                    pygame.quit()
                     return False
 def main():
 
@@ -152,6 +148,10 @@ def main():
     pygame.display.set_caption("Blossom Basket")
     clock = pygame.time.Clock()
     FPS = 60 
+
+    background_img = pygame.image.load("NaturalBackground.png").convert()
+    background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
+    
     #Colors
     WHITE = (255,255,255)
     font = pygame.font.SysFont(None, 36)
@@ -192,11 +192,10 @@ def main():
     
     while running:
         dt = clock.tick(FPS)
-        screen.fill(WHITE)
+        screen.blit(background_img, (0, 0))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
                 return False
             
         #Combo Timer 
@@ -352,11 +351,13 @@ def main():
 
         pygame.display.flip()
 
-    pygame.quit()
     return False
   
 if __name__ == "__main__":
+
     pygame.init()
+    pygame.font.init()
+
     WIDTH, HEIGHT = 800, 1000
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Blossom Basket")
@@ -366,11 +367,13 @@ if __name__ == "__main__":
         if not show_menu(screen, WIDTH, HEIGHT, font):
             break
         result = main()
-        if result is True:
+
+        if result == "quit":
+            break
+        elif result:
             if not show_win_screen(screen, WIDTH, HEIGHT, font):
                 break
-        elif result is False:
+        else:
             if not show_game_over_screen(screen, WIDTH, HEIGHT, font):
                 break
-
     pygame.quit()
