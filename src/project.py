@@ -6,22 +6,33 @@ def show_menu(screen, WIDTH,HEIGHT, font):
     title_font = pygame.font.SysFont(None,72)
     button_font = pygame.font.SysFont(None,48)
 
+    #basket image
+    basket_image = pygame.image.load("FullBasket.png").convert_alpha()
+    basket_scaled = pygame.transform.scale(basket_image, (250, 250))
+    basket_rect = basket_scaled.get_rect(center=(WIDTH // 2, 360))
+
     while True:
         screen.fill((255,255,255))
 
         #Title
         title_text = title_font.render("Blossom Basket", True, (255,105,180))
-        screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 200))
+        screen.blit(title_text, (WIDTH // 2 - title_text.get_width() // 2, 150))
+
+        # Floating basket
+        offset = int(5 * math.sin(pygame.time.get_ticks() / 300))
+        floaty_rect = basket_rect.copy()
+        floaty_rect.centery += offset
+        screen.blit(basket_scaled, floaty_rect)
 
         #Play button 
         play_text = button_font.render("Play", True, (0,0,0))
-        play_rect = play_text.get_rect(center=(WIDTH // 2, 400))
+        play_rect = play_text.get_rect(center=(WIDTH // 2, 550))
         pygame.draw.rect(screen, (255,182,193), play_rect.inflate(40,20))
         screen.blit(play_text, play_rect)
 
         #Quit button 
         quit_text = button_font.render("Quit", True, (0,0,0))
-        quit_rect = quit_text.get_rect(center = (WIDTH // 2, 500))
+        quit_rect = quit_text.get_rect(center = (WIDTH // 2, 640))
         pygame. draw.rect(screen, (255,182,193), quit_rect.inflate(40,20))
         screen.blit(quit_text, quit_rect)
 
@@ -45,7 +56,7 @@ def show_win_screen(screen, WIDTH, HEIGHT, font):
     #basket image
     basket_image = pygame.image.load("FullBasket.png").convert_alpha()
     basket_scaled = pygame.transform.scale(basket_image, (250, 250))  
-    basket_rect = basket_scaled.get_rect(center=(WIDTH // 2, 330)) 
+    basket_rect = basket_scaled.get_rect(center=(WIDTH // 2, 350)) 
 
     while True: 
         screen.fill((255,255,255))
