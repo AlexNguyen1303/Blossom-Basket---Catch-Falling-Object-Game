@@ -67,7 +67,7 @@ def show_win_screen(screen, WIDTH, HEIGHT, font):
 
         #basket image
         # Floating effect
-        offset = int(5 * math.sin(pygame.time.get_ticks() / 300))  # Sine wave motion
+        offset = int(5 * math.sin(pygame.time.get_ticks() / 300))  
         floaty_rect = basket_rect.copy()
         floaty_rect.centery += offset
         screen.blit(basket_scaled, floaty_rect)
@@ -187,9 +187,9 @@ def main():
     combo_streak = 0
     pop_start_time = 0
     pop_duration = 300
-
+    floating_texts = []
     running = True 
-
+    
     while running:
         dt = clock.tick(FPS)
         screen.fill(WHITE)
@@ -227,6 +227,7 @@ def main():
             spawn_timer = 0
 
         #Move items / collision
+        current_time = pygame.time.get_ticks()
         for item in items[:]:
             item["rect"].y += current_fall_speed
             if item["rect"].colliderect(basket_rect):
@@ -236,6 +237,14 @@ def main():
                     combo_streak += 1
                     points = item["points"]
                     score += points * 2 if combo_active else points
+
+                    #floating text for good item
+                    floating_texts.append({
+                        "text": f"+{points * 2 if combo_active else points}",
+                        "pos": item["rect"].center,
+                        "color": (0, 150, 0),
+                        "start": current_time
+                    })
 
                     if score >= goal:
                         return True
@@ -251,8 +260,25 @@ def main():
                     return False  # Game over
                 elif item["type"] == "boot":
                     score = max(0, score - 2)
+
+                    #floating text for score loss
+                    floating_texts.append({
+                        "text": "-2",
+                        "pos": item["rect"].center,
+                        "color": (200, 0, 0),
+                        "start": current_time
+                    })
+
                 elif item["type"] == "moldy":
                     combo_streak = 0
+
+                    #floating text for streak loss
+                    floating_texts.append({
+                        "text": "Streak Lost",
+                        "pos": item["rect"].center,
+                        "color": (120, 0, 120),
+                        "start": current_time
+                    })
                 
             elif item["rect"].y > HEIGHT:
                 items.remove(item)
@@ -310,6 +336,19 @@ def main():
             glow_color = (255, 105 + (pygame.time.get_ticks() // 30) % 50, 180)
             pygame.draw.rect(screen, glow_color, (bar_x, bar_y, bar_width, bar_height))
 
+        now = pygame.time.get_ticks()
+        for text_data in floating_texts[:]:
+            elapsed = now - text_data["start"]
+            if elapsed > 800:
+                floating_texts.remove(text_data)
+            else:
+                alpha = max(0, 255 - int(255 * (elapsed / 800)))  
+                float_font = pygame.font.SysFont(None, 28)
+                text_surface = float_font.render(text_data["text"], True, text_data["color"])
+                text_surface.set_alpha(alpha)
+                float_offset = - (elapsed // 20)  
+                text_pos = (text_data["pos"][0], text_data["pos"][1] + float_offset)
+                screen.blit(text_surface, text_surface.get_rect(center=text_pos))
 
         pygame.display.flip()
 
