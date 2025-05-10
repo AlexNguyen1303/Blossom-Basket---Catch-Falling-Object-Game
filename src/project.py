@@ -72,7 +72,41 @@ def show_win_screen(screen, WIDTH, HEIGHT, font):
                 elif quit_rect.collidepoint(event.pos):
                     pygame.quit()
                     return False
+def show_game_over_screen(screen, WIDTH, HEIGHT, font):
+    over_font = pygame.font.SysFont(None, 64)
+    button_font = pygame.font.SysFont(None, 48)
 
+    while True:
+        screen.fill((255, 255, 255))
+
+        # Game Over Text
+        over_text = over_font.render("Game Over! Bad Picnic!", True, (200, 0, 0))
+        screen.blit(over_text, (WIDTH // 2 - over_text.get_width() // 2, 200))
+
+        # Replay button
+        play_text = button_font.render("Play Again", True, (0, 0, 0))
+        play_rect = play_text.get_rect(center=(WIDTH // 2, 400))
+        pygame.draw.rect(screen, (255, 200, 200), play_rect.inflate(40, 20))
+        screen.blit(play_text, play_rect)
+
+        # Quit button
+        quit_text = button_font.render("Quit", True, (0, 0, 0))
+        quit_rect = quit_text.get_rect(center=(WIDTH // 2, 500))
+        pygame.draw.rect(screen, (200, 200, 200), quit_rect.inflate(40, 20))
+        screen.blit(quit_text, quit_rect)
+
+        pygame.display.flip()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if play_rect.collidepoint(event.pos):
+                    return True
+                elif quit_rect.collidepoint(event.pos):
+                    pygame.quit()
+                    return False
 def main():
 
     pygame.init()
@@ -95,13 +129,16 @@ def main():
     basket_rect = basket_img.get_rect(center=(WIDTH // 2, HEIGHT - target_height // 2))
     base_basket_speed = 7
     # Falling items 
-    emoji_items = [
-    {"emoji": "🍓", "points": 3, "type": "good"},
-    {"emoji": "🥪", "points": 2, "type": "good"},
-    {"emoji": "🧃", "points": 1, "type": "good"},
-    {"emoji": "🪳", "type": "bug"},     
-    {"emoji": "👢", "type": "boot"},    
-    {"emoji": "🗑️", "type": "moldy"}
+    good_items = [
+        {"emoji": "🍓", "points": 3, "type": "good"},
+        {"emoji": "🥪", "points": 2, "type": "good"},
+        {"emoji": "🧃", "points": 1, "type": "good"}
+    ]
+
+    bad_items = [
+        {"emoji": "🪳", "type": "bug"},     
+        {"emoji": "👢", "type": "boot"},    
+        {"emoji": "🗑️", "type": "moldy"}
     ]
     items = []
     spawn_timer = 0
@@ -145,7 +182,10 @@ def main():
         #Spawn items 
         spawn_timer += dt
         if spawn_timer >= 1000:
-            item = random.choice(emoji_items).copy()
+            if random.random() < 0.85:
+                item = random.choice(good_items).copy()
+            else:
+                item = random.choice(bad_items).copy()
             x = random.randint(0, WIDTH - 30)
             item["rect"] = pygame.Rect(x, -30, 30, 30)
             items.append(item)
@@ -251,10 +291,12 @@ if __name__ == "__main__":
     while True:
         if not show_menu(screen, WIDTH, HEIGHT, font):
             break
-        if main():
+        result = main()
+        if result is True:
             if not show_win_screen(screen, WIDTH, HEIGHT, font):
                 break
-        else:
-            break
+        elif result is False:
+            if not show_game_over_screen(screen, WIDTH, HEIGHT, font):
+                break
 
     pygame.quit()
