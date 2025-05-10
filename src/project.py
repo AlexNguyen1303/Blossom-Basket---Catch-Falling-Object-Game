@@ -100,22 +100,33 @@ def show_game_over_screen(screen, WIDTH, HEIGHT, font):
     over_font = pygame.font.SysFont(None, 64)
     button_font = pygame.font.SysFont(None, 48)
 
+    # basket image
+    empty_basket_image = pygame.image.load("Empty_Basket.png").convert_alpha()
+    empty_basket_scaled = pygame.transform.scale(empty_basket_image, (200, 200))
+    empty_basket_rect = empty_basket_scaled.get_rect(center=(WIDTH // 2, 330))
+
     while True:
         screen.fill((255, 255, 255))
 
         # Game Over Text
         over_text = over_font.render("Game Over! Bad Picnic!", True, (200, 0, 0))
-        screen.blit(over_text, (WIDTH // 2 - over_text.get_width() // 2, 200))
+        screen.blit(over_text, (WIDTH // 2 - over_text.get_width() // 2, 150))
+
+        # Floating basket
+        offset = int(5 * math.sin(pygame.time.get_ticks() / 300))
+        floaty_rect = empty_basket_rect.copy()
+        floaty_rect.centery += offset
+        screen.blit(empty_basket_scaled, floaty_rect)
 
         # Replay button
         play_text = button_font.render("Play Again", True, (0, 0, 0))
-        play_rect = play_text.get_rect(center=(WIDTH // 2, 400))
+        play_rect = play_text.get_rect(center=(WIDTH // 2, 550))
         pygame.draw.rect(screen, (255, 200, 200), play_rect.inflate(40, 20))
         screen.blit(play_text, play_rect)
 
         # Quit button
         quit_text = button_font.render("Quit", True, (0, 0, 0))
-        quit_rect = quit_text.get_rect(center=(WIDTH // 2, 500))
+        quit_rect = quit_text.get_rect(center=(WIDTH // 2, 640))
         pygame.draw.rect(screen, (200, 200, 200), quit_rect.inflate(40, 20))
         screen.blit(quit_text, quit_rect)
 
