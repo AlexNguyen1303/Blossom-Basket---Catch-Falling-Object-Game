@@ -88,9 +88,12 @@ def main():
     PINK = (255,182,193)
     font = pygame.font.SysFont(None, 36)
     #Basket
-    basket_img = pygame.image.load("Empty_Basket.png").convert_alpha()
-    basket_img = pygame.transform.scale(basket_img, (120, 90))
-    basket_rect = basket_img.get_rect(center=(WIDTH//2, HEIGHT - 60))
+    original_img = pygame.image.load("Empty_Basket.png").convert_alpha()
+    target_height = 150
+    aspect_ratio = original_img.get_width() / original_img.get_height()
+    new_width = int(target_height * aspect_ratio)
+    basket_img = pygame.transform.scale(original_img, (new_width, target_height))
+    basket_rect = basket_img.get_rect(center=(WIDTH // 2, HEIGHT - target_height // 2))
     base_basket_speed = 7
     # Falling items 
     item_img = pygame.Surface((30,30))
@@ -196,7 +199,7 @@ def main():
             # Show popped text :
             pop_font = pygame.font.SysFont(None, int(36 * scale))
             pop_text = pop_font.render(f"DOUBLE POINT!x2", True, (255, 50, 150))
-            screen.blit(pop_text, (WIDTH // 2 - pop_text.get_width() // 2, 50))
+            screen.blit(pop_text, (WIDTH // 2 - pop_text.get_width() // 2, 110))
 
 
             #Combo countdown bar 
