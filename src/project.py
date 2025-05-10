@@ -88,9 +88,9 @@ def main():
     PINK = (255,182,193)
     font = pygame.font.SysFont(None, 36)
     #Basket
-    basket_img = pygame.Surface((100,50))
-    basket_img.fill(PINK)
-    basket_rect = basket_img.get_rect(center=(WIDTH//2, HEIGHT - 50))
+    basket_img = pygame.image.load("Empty_Basket.png").convert_alpha()
+    basket_img = pygame.transform.scale(basket_img, (120, 90))
+    basket_rect = basket_img.get_rect(center=(WIDTH//2, HEIGHT - 60))
     base_basket_speed = 7
     # Falling items 
     item_img = pygame.Surface((30,30))
@@ -166,13 +166,6 @@ def main():
                 items.remove(item)
                 combo_streak = 0
                 combo_active = False
-
-        # Glow basket during combo
-        if combo_active:
-            basket_img.fill((255, 105, 180))  
-        else:
-            basket_img.fill(PINK)
-
 
         #Draw everything 
         screen.blit(basket_img, basket_rect)
