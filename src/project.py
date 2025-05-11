@@ -190,6 +190,59 @@ def main():
     floating_texts = []
     running = True 
     
+    #Pre-Game Instruction
+    instruction_start = pygame.time.get_ticks()
+    instruction_duration = 5000 
+
+    overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    overlay.fill((255, 255, 255, 220)) 
+
+    header_font = pygame.font.SysFont(None, 60)
+    emoji_font_size = 48
+    emoji_font = pygame.font.SysFont("Segoe UI Emoji", emoji_font_size)
+    countdown_font = pygame.font.SysFont(None, 80)
+
+    while pygame.time.get_ticks() - instruction_start < instruction_duration:
+        now = pygame.time.get_ticks()
+        elapsed = now - instruction_start
+        remaining_seconds = max(0, 5 - elapsed // 1000)
+
+        #Scale animation
+        scale_factor = 1 + 0.05 * math.sin(now / 200)
+        pulse_size = int(emoji_font_size * scale_factor)
+        pulse_font = pygame.font.SysFont("Segoe UI Emoji", pulse_size)
+
+        screen.blit(background_img, (0, 0))
+        screen.blit(overlay, (0, 0))
+
+        center_y = HEIGHT // 2
+
+        #Countdown
+        countdown_surface = countdown_font.render(str(remaining_seconds) if remaining_seconds > 0 else "Go!", True, (50, 50, 150))
+        screen.blit(countdown_surface, (WIDTH // 2 - countdown_surface.get_width() // 2, center_y - 260))
+
+        #Get Ready!
+        get_ready_font = pygame.font.SysFont(None, 48)
+        get_ready_text = get_ready_font.render("Get Ready!", True, (100, 60, 150))
+        screen.blit(get_ready_text, (WIDTH // 2 - get_ready_text.get_width() // 2, center_y - 200))
+
+        #Catch These!
+        catch_text = header_font.render("Catch These!", True, (0, 120, 0))
+        screen.blit(catch_text, (WIDTH // 2 - catch_text.get_width() // 2, center_y - 130))
+
+        catch_emojis = pulse_font.render("🍓  🥪  🧃", True, (0, 120, 0))
+        screen.blit(catch_emojis, (WIDTH // 2 - catch_emojis.get_width() // 2, center_y - 70))
+
+        #Avoid These!
+        avoid_text = header_font.render("Avoid These!", True, (180, 0, 0))
+        screen.blit(avoid_text, (WIDTH // 2 - avoid_text.get_width() // 2, center_y + 20))
+
+        avoid_emojis = pulse_font.render("🪳  👢  🗑️", True, (180, 0, 0))
+        screen.blit(avoid_emojis, (WIDTH // 2 - avoid_emojis.get_width() // 2, center_y + 90))
+
+        pygame.display.flip()
+        clock.tick(FPS)
+
     while running:
         dt = clock.tick(FPS)
         screen.blit(background_img, (0, 0))
