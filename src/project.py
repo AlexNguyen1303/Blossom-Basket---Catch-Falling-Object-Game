@@ -241,7 +241,7 @@ def main():
                     floating_texts.append({
                         "text": f"+{points * 2 if combo_active else points}",
                         "pos": item["rect"].center,
-                        "color": (0, 150, 0),
+                        "color": (255, 235, 100),
                         "start": current_time
                     })
 
@@ -289,10 +289,14 @@ def main():
         screen.blit(basket_img, basket_rect)
         for item in items:
             if combo_active:
-                # glowing behind emoji
-                glow = pygame.Surface((30, 30), pygame.SRCALPHA)
-                glow.fill((255, 200, 220, 180))
-                screen.blit(glow, item["rect"])
+                # Get center position
+                center = item["rect"].center
+
+                # Create a circular glow (soft halo)
+                glow_radius = 25
+                glow_surface = pygame.Surface((glow_radius * 2, glow_radius * 2), pygame.SRCALPHA)
+                pygame.draw.circle(glow_surface, (255, 240, 100, 140), (glow_radius, glow_radius), glow_radius)
+                screen.blit(glow_surface, glow_surface.get_rect(center=center))
             emoji_font = pygame.font.SysFont("Segoe UI Emoji", 40)
             emoji_text = emoji_font.render(item["emoji"], True, (0, 0, 0))
             text_rect = emoji_text.get_rect(center=item["rect"].center)
@@ -304,7 +308,7 @@ def main():
         screen.blit(streak_text, (10, 50))
 
         if combo_active:
-            combo_text = font.render(f"AMAZING COMBO !! x {combo_streak}!", True, (255,100,100))
+            combo_text = font.render(f"AMAZING COMBO !! x {combo_streak}!", True, (80,40,120))
             screen.blit(combo_text, (WIDTH // 2 - combo_text.get_width() // 2, 20))
 
             # Show popped effect : 
@@ -315,7 +319,7 @@ def main():
 
             # Show popped text :
             pop_font = pygame.font.SysFont(None, int(36 * scale))
-            pop_text = pop_font.render(f"DOUBLE POINT!x2", True, (255, 50, 150))
+            pop_text = pop_font.render(f"DOUBLE POINT!x2", True, (100, 50, 180))
             screen.blit(pop_text, (WIDTH // 2 - pop_text.get_width() // 2, 110))
 
 
@@ -326,13 +330,14 @@ def main():
             bar_x = WIDTH // 2 - 150
             bar_y = 80
             remaining_seconds = remaining_time // 1000
-            countdown_text = font.render(f"{remaining_seconds + 1}s", True, (120, 120, 120))
+            countdown_text = font.render(f"{remaining_seconds + 1}s", True, (50, 80, 120))
             screen.blit(countdown_text, (WIDTH // 2 - countdown_text.get_width() // 2, bar_y - 25))
 
             # Draw the bar 
             pygame.draw.rect(screen, (200, 200, 200), (bar_x, bar_y, 300, bar_height))
             # Draw remaining time on a bar 
-            glow_color = (255, 105 + (pygame.time.get_ticks() // 30) % 50, 180)
+            tick = (pygame.time.get_ticks() // 5) % 255
+            glow_color = (100 + tick % 100, 120 + tick % 70, 180 + tick % 50)
             pygame.draw.rect(screen, glow_color, (bar_x, bar_y, bar_width, bar_height))
 
         now = pygame.time.get_ticks()
