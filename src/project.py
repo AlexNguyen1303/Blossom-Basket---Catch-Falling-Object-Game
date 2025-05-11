@@ -3,13 +3,13 @@ import random
 import math
 
 def show_menu(screen, WIDTH,HEIGHT, font):
-    title_font = pygame.font.SysFont(None,72)
+    title_font = pygame.font.SysFont("Comic Sans MS",72)
     button_font = pygame.font.SysFont(None,48)
 
     #basket image
     basket_image = pygame.image.load("FullBasket.png").convert_alpha()
     basket_scaled = pygame.transform.scale(basket_image, (250, 250))
-    basket_rect = basket_scaled.get_rect(center=(WIDTH // 2, 360))
+    basket_rect = basket_scaled.get_rect(center=(WIDTH // 2, 380))
 
     while True:
         screen.fill((255,255,255))
@@ -47,15 +47,17 @@ def show_menu(screen, WIDTH,HEIGHT, font):
                 elif quit_rect.collidepoint(event.pos):
                     return False
                 
-def show_win_screen(screen, WIDTH, HEIGHT, font):
+def show_win_screen(screen, WIDTH, HEIGHT, font, highest_streak):
     pygame.font.init()
-    win_font = pygame.font.SysFont(None, 64)
+    win_font = pygame.font.SysFont("Comic Sans MS", 64)
     button_font = pygame.font.SysFont(None, 48)
+    streak_font = pygame.font.SysFont(None, 40)
+
 
     #basket image
     basket_image = pygame.image.load("FullBasket.png").convert_alpha()
     basket_scaled = pygame.transform.scale(basket_image, (250, 250))  
-    basket_rect = basket_scaled.get_rect(center=(WIDTH // 2, 350)) 
+    basket_rect = basket_scaled.get_rect(center=(WIDTH // 2, 390)) 
 
     while True: 
         screen.fill((255,255,255))
@@ -64,22 +66,26 @@ def show_win_screen(screen, WIDTH, HEIGHT, font):
         win_text = win_font.render("Amazing Picnic!", True, (0,150,0))
         screen.blit(win_text, (WIDTH // 2 - win_text.get_width() // 2, 150))
 
+        #Highest Streak
+        streak_text = streak_font.render(f"Highest Streak: {highest_streak}", True, (80, 50, 120))
+        screen.blit(streak_text, (WIDTH // 2 - streak_text.get_width() // 2, 530))
+
         #basket image
         # Floating effect
         offset = int(5 * math.sin(pygame.time.get_ticks() / 300))  
         floaty_rect = basket_rect.copy()
-        floaty_rect.centery += offset
+        floaty_rect.centery = 380 + offset  
         screen.blit(basket_scaled, floaty_rect)
 
         #Play Again 
         play_text = button_font.render("Play Again", True, (0,0,0))
-        play_rect = play_text.get_rect(center=(WIDTH // 2, 580))
+        play_rect = play_text.get_rect(center=(WIDTH // 2, 620))
         pygame.draw.rect(screen, (200,255,200), play_rect.inflate(40, 20), border_radius=20)
         screen.blit(play_text, play_rect)
 
         #Quit button
         quit_text = button_font.render("Quit", True,(0,0,0))
-        quit_rect = quit_text.get_rect(center=(WIDTH // 2,670))
+        quit_rect = quit_text.get_rect(center=(WIDTH // 2,700))
         pygame.draw.rect(screen, (255,200,200), quit_rect.inflate(40,20), border_radius=20)
         screen.blit(quit_text, quit_rect)
 
@@ -95,13 +101,13 @@ def show_win_screen(screen, WIDTH, HEIGHT, font):
                     return False
 def show_game_over_screen(screen, WIDTH, HEIGHT, font):
     pygame.font.init()
-    over_font = pygame.font.SysFont(None, 64)
+    over_font = pygame.font.SysFont("Comic Sans MS", 64)
     button_font = pygame.font.SysFont(None, 48)
 
     # basket image
     empty_basket_image = pygame.image.load("Empty_Basket.png").convert_alpha()
     empty_basket_scaled = pygame.transform.scale(empty_basket_image, (200, 200))
-    empty_basket_rect = empty_basket_scaled.get_rect(center=(WIDTH // 2, 330))
+    empty_basket_rect = empty_basket_scaled.get_rect(center=(WIDTH // 2, 370))
 
     while True:
         screen.fill((255, 255, 255))
@@ -299,7 +305,7 @@ def main():
                     })
 
                     if score >= goal:
-                        return True
+                        return {"won": True, "highest_streak": combo_streak}
 
                     if combo_streak % 20 == 0:
                         if not combo_active:
@@ -436,8 +442,9 @@ if __name__ == "__main__":
 
         if result == "quit":
             break
-        elif result:
-            if not show_win_screen(screen, WIDTH, HEIGHT, font):
+        elif isinstance(result, dict) and result.get("won"):
+            highest_streak = result.get("highest_streak", 0)
+            if not show_win_screen(screen, WIDTH, HEIGHT, font, highest_streak):
                 break
         else:
             if not show_game_over_screen(screen, WIDTH, HEIGHT, font):
