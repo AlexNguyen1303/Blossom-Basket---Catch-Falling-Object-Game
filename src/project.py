@@ -3,12 +3,14 @@ import random
 import math
 import os
 
+ASSET_DIR = "assets/"
+
 def show_menu(screen, WIDTH,HEIGHT, font):
     title_font = pygame.font.SysFont("Comic Sans MS",72)
     button_font = pygame.font.SysFont(None,48)
 
     #basket image
-    basket_image = pygame.image.load("FullBasket.png").convert_alpha()
+    basket_image = pygame.image.load(os.path.join(ASSET_DIR, "FullBasket.png")).convert_alpha()
     basket_scaled = pygame.transform.scale(basket_image, (250, 250))
     basket_rect = basket_scaled.get_rect(center=(WIDTH // 2, 380))
 
@@ -56,7 +58,7 @@ def show_win_screen(screen, WIDTH, HEIGHT, font, highest_streak):
 
 
     #basket image
-    basket_image = pygame.image.load("FullBasket.png").convert_alpha()
+    basket_image = pygame.image.load(os.path.join(ASSET_DIR, "FullBasket.png")).convert_alpha()
     basket_scaled = pygame.transform.scale(basket_image, (250, 250))  
     basket_rect = basket_scaled.get_rect(center=(WIDTH // 2, 390)) 
 
@@ -106,7 +108,7 @@ def show_game_over_screen(screen, WIDTH, HEIGHT, font):
     button_font = pygame.font.SysFont(None, 48)
 
     # basket image
-    empty_basket_image = pygame.image.load("Empty_Basket.png").convert_alpha()
+    empty_basket_image = pygame.image.load(os.path.join(ASSET_DIR, "Empty_Basket.png")).convert_alpha()
     empty_basket_scaled = pygame.transform.scale(empty_basket_image, (200, 200))
     empty_basket_rect = empty_basket_scaled.get_rect(center=(WIDTH // 2, 370))
 
@@ -148,24 +150,24 @@ def show_game_over_screen(screen, WIDTH, HEIGHT, font):
 def main():
 
     pygame.init()
-    
+
     # Load sounds
-    pygame.mixer.music.load("background music.mp3")
+    pygame.mixer.music.load(os.path.join(ASSET_DIR, "background music.mp3"))
     pygame.mixer.music.set_volume(0.05)  
 
-    collect_sound = pygame.mixer.Sound("Collectible.wav")
+    collect_sound = pygame.mixer.Sound(os.path.join(ASSET_DIR, "Collectible.wav"))
     collect_sound.set_volume(0.5)
 
-    buzz_sound = pygame.mixer.Sound("buzz.flac")
+    buzz_sound = pygame.mixer.Sound(os.path.join(ASSET_DIR, "buzz.flac"))
     buzz_sound.set_volume(0.7)
 
-    win_sound = pygame.mixer.Sound("Win.wav")
+    win_sound = pygame.mixer.Sound(os.path.join(ASSET_DIR, "Win.wav"))
     win_sound.set_volume(0.8)
 
-    lose_sound = pygame.mixer.Sound("lose.wav")
+    lose_sound = pygame.mixer.Sound(os.path.join(ASSET_DIR, "lose.wav"))
     lose_sound.set_volume(0.5)
 
-    combo_sound = pygame.mixer.Sound("Combo.wav")
+    combo_sound = pygame.mixer.Sound(os.path.join(ASSET_DIR, "Combo.wav"))
     combo_sound.set_volume(0.5)
 
     #Start background music
@@ -178,14 +180,14 @@ def main():
     clock = pygame.time.Clock()
     FPS = 60 
 
-    background_img = pygame.image.load("NaturalBackground.png").convert()
+    background_img = pygame.image.load(os.path.join(ASSET_DIR, "NaturalBackground.png")).convert()
     background_img = pygame.transform.scale(background_img, (WIDTH, HEIGHT))
     
     #Colors
     WHITE = (255,255,255)
     font = pygame.font.SysFont(None, 36)
     #Basket
-    original_img = pygame.image.load("Empty_Basket.png").convert_alpha()
+    original_img = pygame.image.load(os.path.join(ASSET_DIR, "Empty_Basket.png")).convert_alpha()
     target_height = 150
     aspect_ratio = original_img.get_width() / original_img.get_height()
     new_width = int(target_height * aspect_ratio)
