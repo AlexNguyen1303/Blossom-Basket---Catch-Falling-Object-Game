@@ -1,6 +1,7 @@
 import pygame
 import random 
 import math
+import os
 
 def show_menu(screen, WIDTH,HEIGHT, font):
     title_font = pygame.font.SysFont("Comic Sans MS",72)
@@ -147,6 +148,28 @@ def show_game_over_screen(screen, WIDTH, HEIGHT, font):
 def main():
 
     pygame.init()
+    
+    # Load sounds
+    pygame.mixer.music.load("background music.mp3")
+    pygame.mixer.music.set_volume(0.05)  # soft background music
+
+    collect_sound = pygame.mixer.Sound("Collectible.wav")
+    collect_sound.set_volume(0.5)
+
+    buzz_sound = pygame.mixer.Sound("buzz.flac")
+    buzz_sound.set_volume(0.7)
+
+    win_sound = pygame.mixer.Sound("Win.wav")
+    win_sound.set_volume(0.8)
+
+    lose_sound = pygame.mixer.Sound("lose.wav")
+    lose_sound.set_volume(0.5)
+
+    combo_sound = pygame.mixer.Sound("Combo.wav")
+    combo_sound.set_volume(0.5)
+
+    # Start background music
+    pygame.mixer.music.play(-1)
 
     #Screen
     WIDTH, HEIGHT = 800,1000
@@ -292,6 +315,7 @@ def main():
                 items.remove(item)
                 #good items
                 if item.get("type") == "good":
+                    collect_sound.play()
                     combo_streak += 1
                     points = item["points"]
                     score += points * 2 if combo_active else points
@@ -305,6 +329,7 @@ def main():
                     })
 
                     if score >= goal:
+                        win_sound.play()
                         return {"won": True, "highest_streak": combo_streak}
 
                     if combo_streak % 20 == 0:
@@ -312,12 +337,15 @@ def main():
                             combo_active = True
                             combo_start_time = pygame.time.get_ticks()
                             pop_start_time = pygame.time.get_ticks()
+                            combo_sound.play()
 
                 #bad items
                 elif item["type"] == "bug":
+                    lose_sound.play()
                     return False  # Game over
                 elif item["type"] == "boot":
                     score = max(0, score - 2)
+                    buzz_sound.play()
 
                     #floating text for score loss
                     floating_texts.append({
@@ -329,7 +357,7 @@ def main():
 
                 elif item["type"] == "moldy":
                     combo_streak = 0
-
+                    buzz_sound.play()
                     #floating text for streak loss
                     floating_texts.append({
                         "text": "Streak Lost",
