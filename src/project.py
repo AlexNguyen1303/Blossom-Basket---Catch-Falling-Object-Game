@@ -27,13 +27,13 @@ def show_menu(screen, WIDTH,HEIGHT, font):
         #Play button 
         play_text = button_font.render("Play", True, (0,0,0))
         play_rect = play_text.get_rect(center=(WIDTH // 2, 550))
-        pygame.draw.rect(screen, (255,182,193), play_rect.inflate(40,20))
+        pygame.draw.rect(screen, (255,182,193), play_rect.inflate(40,20), border_radius=20)
         screen.blit(play_text, play_rect)
 
         #Quit button 
         quit_text = button_font.render("Quit", True, (0,0,0))
         quit_rect = quit_text.get_rect(center = (WIDTH // 2, 640))
-        pygame. draw.rect(screen, (255,182,193), quit_rect.inflate(40,20))
+        pygame.draw.rect(screen, (255,182,193), quit_rect.inflate(40,20), border_radius=20)
         screen.blit(quit_text, quit_rect)
 
         pygame.display.flip()
@@ -74,13 +74,13 @@ def show_win_screen(screen, WIDTH, HEIGHT, font):
         #Play Again 
         play_text = button_font.render("Play Again", True, (0,0,0))
         play_rect = play_text.get_rect(center=(WIDTH // 2, 580))
-        pygame.draw.rect(screen, (200,255,200), play_rect.inflate(40, 20))
+        pygame.draw.rect(screen, (200,255,200), play_rect.inflate(40, 20), border_radius=20)
         screen.blit(play_text, play_rect)
 
         #Quit button
         quit_text = button_font.render("Quit", True,(0,0,0))
         quit_rect = quit_text.get_rect(center=(WIDTH // 2,670))
-        pygame.draw.rect(screen, (255,200,200), quit_rect.inflate(40,20))
+        pygame.draw.rect(screen, (255,200,200), quit_rect.inflate(40,20), border_radius=20)
         screen.blit(quit_text, quit_rect)
 
         pygame. display.flip()
@@ -119,13 +119,13 @@ def show_game_over_screen(screen, WIDTH, HEIGHT, font):
         # Replay button
         play_text = button_font.render("Play Again", True, (0, 0, 0))
         play_rect = play_text.get_rect(center=(WIDTH // 2, 550))
-        pygame.draw.rect(screen, (255, 200, 200), play_rect.inflate(40, 20))
+        pygame.draw.rect(screen, (255, 200, 200), play_rect.inflate(40, 20), border_radius=20)
         screen.blit(play_text, play_rect)
 
         # Quit button
         quit_text = button_font.render("Quit", True, (0, 0, 0))
         quit_rect = quit_text.get_rect(center=(WIDTH // 2, 640))
-        pygame.draw.rect(screen, (200, 200, 200), quit_rect.inflate(40, 20))
+        pygame.draw.rect(screen, (200, 200, 200), quit_rect.inflate(40, 20), border_radius=20)
         screen.blit(quit_text, quit_rect)
 
         pygame.display.flip()
@@ -355,10 +355,18 @@ def main():
             text_rect = emoji_text.get_rect(center=item["rect"].center)
             screen.blit(emoji_text, text_rect)
 
-        score_text = font.render(f"Score: {score}", True, (0,0,0))
-        streak_text = font.render(f"Streak: {combo_streak}", True, (100,100,100))
-        screen.blit(score_text, (10, 10))
-        screen.blit(streak_text, (10, 50))
+        #score panel
+        panel_width = 200
+        panel_height = 80
+        panel_surface = pygame.Surface((panel_width, panel_height), pygame.SRCALPHA)
+        pygame.draw.rect(panel_surface, (255, 200, 220, 200), (0, 0, panel_width, panel_height), border_radius=15)
+        screen.blit(panel_surface, (10, 10))
+
+        # Score/Streak text
+        score_text = font.render(f"Score: {score}", True, (60, 40, 80))
+        streak_text = font.render(f"Streak: {combo_streak}", True, (100, 80, 120))
+        screen.blit(score_text, (20, 20))
+        screen.blit(streak_text, (20, 50))
 
         if combo_active:
             combo_text = font.render(f"AMAZING COMBO !! x {combo_streak}!", True, (80,40,120))
@@ -368,7 +376,7 @@ def main():
             elapsed = pygame.time.get_ticks() - pop_start_time
             scale = 1.0
             if elapsed < pop_duration:
-                scale = 1.2 - 0.2 * (elapsed / pop_duration)  # Shrinks back to normal
+                scale = 1.2 - 0.2 * (elapsed / pop_duration) 
 
             # Show popped text :
             pop_font = pygame.font.SysFont(None, int(36 * scale))
