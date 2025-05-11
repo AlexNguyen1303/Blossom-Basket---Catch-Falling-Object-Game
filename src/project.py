@@ -13,7 +13,7 @@ def show_menu(screen, WIDTH,HEIGHT, font):
     basket_rect = basket_scaled.get_rect(center=(WIDTH // 2, 380))
 
     while True:
-        screen.fill((255,255,255))
+        screen.fill((250, 248, 240))
 
         #Title
         title_text = title_font.render("Blossom Basket", True, (255,105,180))
@@ -61,7 +61,7 @@ def show_win_screen(screen, WIDTH, HEIGHT, font, highest_streak):
     basket_rect = basket_scaled.get_rect(center=(WIDTH // 2, 390)) 
 
     while True: 
-        screen.fill((255,255,255))
+        screen.fill((240, 255, 245))
 
         #Win Text
         win_text = win_font.render("Amazing Picnic!", True, (0,150,0))
@@ -111,7 +111,7 @@ def show_game_over_screen(screen, WIDTH, HEIGHT, font):
     empty_basket_rect = empty_basket_scaled.get_rect(center=(WIDTH // 2, 370))
 
     while True:
-        screen.fill((255, 255, 255))
+        screen.fill((25, 20, 30))
 
         # Game Over Text
         over_text = over_font.render("Game Over! Bad Picnic!", True, (200, 0, 0))
@@ -151,7 +151,7 @@ def main():
     
     # Load sounds
     pygame.mixer.music.load("background music.mp3")
-    pygame.mixer.music.set_volume(0.05)  # soft background music
+    pygame.mixer.music.set_volume(0.05)  
 
     collect_sound = pygame.mixer.Sound("Collectible.wav")
     collect_sound.set_volume(0.5)
@@ -168,7 +168,7 @@ def main():
     combo_sound = pygame.mixer.Sound("Combo.wav")
     combo_sound.set_volume(0.5)
 
-    # Start background music
+    #Start background music
     pygame.mixer.music.play(-1)
 
     #Screen
